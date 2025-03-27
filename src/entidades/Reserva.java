@@ -1,5 +1,7 @@
 package entidades;
 
+import java.time.LocalDateTime;
+
 /** 
  * Clase Reserva con las propiedades de la reserva, el id de la pista, la fecha de la reserva y la duración.
  */
@@ -7,7 +9,7 @@ package entidades;
 public class Reserva {
 
     private int idPista;
-    private String fecha;
+    private LocalDateTime fecha;
     private int duracion;
 
     /**
@@ -16,7 +18,7 @@ public class Reserva {
      * @param fecha Contiene la fecha en la que se hace la reserva de la pista.
      * @param duracion Contiene la duración de la reserva de la pista.
      */
-    public Reserva (int idPista, String fecha, int duracion) {
+    public Reserva (int idPista, LocalDateTime fecha, int duracion) {
     	
         this.idPista = idPista;
         this.fecha = fecha;
@@ -36,7 +38,7 @@ public class Reserva {
      * Obtenemos la fecha de la pista referenciada
      * @return fecha es el valor a devolver
      */
-    public String getFecha() {
+    public LocalDateTime getFecha() {
     	
         return fecha;
     }

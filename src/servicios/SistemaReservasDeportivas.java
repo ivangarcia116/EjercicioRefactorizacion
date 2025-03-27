@@ -1,6 +1,7 @@
 
 package servicios;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import entidades.Reserva;
@@ -12,8 +13,8 @@ import entidades.Reserva;
 public class SistemaReservasDeportivas {
 
     private List<Reserva> reservas;
-    private boolean[] iluminacion;
-    private static final int MAX_PISTAS = 10; // Número máximo de pistas disponibles
+    GestorIluminacion data = new GestorIluminacion();
+	static final int MAX_PISTAS = 10; // Número máximo de pistas disponibles
 
     /**
      * Constructor que inicializa la lista de reservas y el estado de iluminación.
@@ -22,7 +23,7 @@ public class SistemaReservasDeportivas {
     public SistemaReservasDeportivas() {
     	
         reservas = new ArrayList<>();
-        iluminacion = new boolean[MAX_PISTAS];
+        data.iluminacion = new boolean[MAX_PISTAS];
     }
 
     /**
@@ -34,25 +35,25 @@ public class SistemaReservasDeportivas {
      * @return true si la reserva fue exitosa, false si la pista ya está reservada o el ID es inválido.
      */
     
-    public boolean reservarPista(int idPista, String fecha, int duracion) {
+    public boolean reservarPista(Reserva reserva) {
     	
-        if (idPista < 0 || idPista >= MAX_PISTAS) {
+        if (reserva.getIdPista() < 0 || reserva.getIdPista() >= MAX_PISTAS) {
         	
             return false; // ID de pista inválido
         }
         
         for (Reserva r : reservas) {
         	
-            if (r.getIdPista() == idPista && r.getFecha().equals(fecha)) {
+            if (r.getIdPista() == reserva.getIdPista() && esFechaDisponible(reserva.getFecha(), r)) {
             	
                 return false; // Pista ya reservada en esa fecha
             }
         }
         
-        reservas.add(new Reserva(idPista, fecha, duracion));
+        reservas.add(reserva);
         return true;
     }
-
+    
     /**
      * Cancela una reserva basada en su ID.
      * 
@@ -75,42 +76,6 @@ public class SistemaReservasDeportivas {
     }
 
     /**
-     * Activa la iluminación de una pista específica.
-     * 
-     * @param idPista ID de la pista.
-     * @return true si la iluminación se activó correctamente, false si el ID es inválido.
-     */
-    
-    public boolean activarIluminacion(int idPista) {
-    	
-        if (idPista < 0 || idPista >= MAX_PISTAS) {
-        	
-            return false; // ID de pista inválido
-        }
-        
-        iluminacion[idPista] = true;
-        return true;
-    }
-
-    /**
-     * Desactiva la iluminación de la pista que le indiques.
-     * 
-     * @param idPista ID de la pista.
-     * @return true si la iluminación se desactivó correctamente, false si el ID es inválido.
-     */
-    
-    public boolean desactivarIluminacion(int idPista) {
-    	
-        if (idPista < 0 || idPista >= MAX_PISTAS) {
-        	
-            return false; // ID de pista inválido
-        }
-        
-        iluminacion[idPista] = false;
-        return true;
-    }
-
-    /**
      * Verifica si una pista está disponible en una fecha y hora determinada.
      * @param idPista ID de la pista.
      * @param fecha Fecha a consultar en formato "YYYY-MM-DD".
@@ -118,7 +83,7 @@ public class SistemaReservasDeportivas {
      * @return true si la pista está disponible, false si ya está reservada o el ID es inválido.
      */
     
-    public boolean verificarDisponibilidad(int idPista, String fecha, String hora) {
+    public boolean verificarDisponibilidad(int idPista, LocalDateTime fecha, String hora) {
     	
         if (idPista < 0 || idPista >= MAX_PISTAS) {
         	
@@ -127,7 +92,7 @@ public class SistemaReservasDeportivas {
         
         for (Reserva r : reservas) {
         	
-            if (r.getIdPista() == idPista && r.getFecha().equals(fecha)) {
+            if (r.getIdPista() == idPista && esFechaDisponible(fecha, r)) {
             	
                 return false; // La pista ya está reservada
             }
@@ -135,4 +100,8 @@ public class SistemaReservasDeportivas {
         
         return true; // La pista está disponible
     }
+
+	private boolean esFechaDisponible(LocalDateTime fecha, Reserva r) {
+		return r.getFecha().equals(fecha);
+	}
 }
